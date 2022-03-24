@@ -13,10 +13,9 @@ public class MainManager : MonoBehaviour
     public Text ScoreText;
     public Text BestScoreText;
     public GameObject GameOverText;
-    
+
     private bool m_Started = false;
     private int m_Points;
-    
     private bool m_GameOver = false;
 
     // Start is called before the first frame update
@@ -26,7 +25,8 @@ public class MainManager : MonoBehaviour
         int perLine = Mathf.FloorToInt(4.0f / step);
 
         BestScoreText.text = BestScoreStr();
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
+        ScoreText.text = ActualScoreStr();
+        int[] pointCountArray = new[] {1, 1, 2, 2, 5, 5};
         for (int i = 0; i < LineCount; ++i)
         {
             for (int x = 0; x < perLine; ++x)
@@ -60,6 +60,10 @@ public class MainManager : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                SceneManager.LoadScene(0);
+            }
         }
     }
 
@@ -67,19 +71,24 @@ public class MainManager : MonoBehaviour
     {
         m_Points += point;
         ScoreManager.Instance.BestScore = m_Points;
-        
-        ScoreText.text = $"Score : {m_Points}";
+
+        ScoreText.text = ActualScoreStr();
     }
 
     public void GameOver()
     {
         m_GameOver = true;
-        BestScoreText.text = BestScoreStr(); 
+        BestScoreText.text = BestScoreStr();
         GameOverText.SetActive(true);
     }
 
     private string BestScoreStr()
     {
         return $"Best Score: Name: {ScoreManager.Instance.BestScore}";
+    }
+
+    private string ActualScoreStr()
+    {
+        return $"Score: {ScoreManager.Instance.ActualPlayer}: {m_Points}";
     }
 }
