@@ -8,19 +8,21 @@ using TMPro;
 public class MenuUiHandler : MonoBehaviour
 {
     [SerializeField] private TMP_InputField PlayerNameField;
+
+    void Start()
+    {
+        ScoreManager.Instance.LoadPlayers();
+    }
+    
     public void StartGame()
     {
-        AddPlayer();
+        ScoreManager.Instance.AddPlayer(PlayerNameField.text);
         string actualPlayer = ScoreManager.Instance.ActualPlayer;
-        Debug.Log($"actualPlayer: {actualPlayer}");
+        
         if (!String.IsNullOrEmpty(actualPlayer))
         {
+            ScoreManager.Instance.SavePlayer();
             SceneManager.LoadScene(1);
         }
-    }
-
-    private void AddPlayer()
-    {
-        ScoreManager.Instance.AddPlayer(PlayerNameField.text);
     }
 }

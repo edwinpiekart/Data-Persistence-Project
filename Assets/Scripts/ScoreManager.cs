@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -8,6 +9,11 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance;
     private int bestScore;
     private string actualPlayer;
+    // Events
+    public delegate void ChangePlayerAction();
+
+    public static event ChangePlayerAction OnChangePlayer;
+    
 
     public int BestScore
     {
@@ -21,8 +27,18 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    public string ActualPlayer { get; private set; }
+    public string ActualPlayer
+    {
+        get => actualPlayer;
 
+        private set
+        {
+            actualPlayer = value;
+            OnChangePlayer?.Invoke();
+        }
+    }
+
+    [Serializable]
     public struct PlayerScore
     {
         public string Name;
@@ -49,21 +65,6 @@ public class ScoreManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
-    {
-        // PlayerScores.Add(new PlayerScore("Wałecki", 1));
-        // PlayerScores.Add(new PlayerScore("Pałpecki", 2));
-
-        // LogPlayers();
-    }
-
-    /*
-     * TODO: do zrobienia - wersja bez serializacji i zapisywania na dysku:
-     * 1. Przycisk Start zadziała tylko wówczas, gdy istnieje na liście jakiś gracz.
-     * 2. Jeśli gracza na liście nie ma, to czeka na wpisanie.
-     * 3. Na liście ostatni gracz jest tym aktualnym.
-     */
-
     public void AddPlayer(string playerName)
     {
         playerName = String.IsNullOrEmpty(playerName) ? "Noname" : playerName;
@@ -73,19 +74,43 @@ public class ScoreManager : MonoBehaviour
         );
 
         if (playerScore.Name == null)
+        {
             playerScore.Name = playerName;
+            PlayerScores.Add(playerScore);
+        }
 
-        PlayerScores.Add(playerScore);
         ActualPlayer = playerScore.Name;
-
-        LogPlayers();
+    }
+    
+    [System.Serializable]
+    class SaveData
+    {
+        public string Player;
+        public List<PlayerScore> SavedPlayerScores;
     }
 
-    private void LogPlayers()
+    public void SavePlayer()
     {
-        foreach (PlayerScore ps in PlayerScores)
+        SaveData saveData = new SaveData
         {
-            Debug.Log($"name: {ps.Name}; score: {ps.Score}");
+            Player = ActualPlayer,
+            SavedPlayerScores = PlayerScores
+        };
+        string json = JsonUtility.ToJson(saveData);
+
+        File.WriteAllText(Application.persistentDataPath + "/player_data.json", json);
+    }
+
+    public void LoadPlayers()
+    {
+        string path = Application.persistentDataPath + "/player_data.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData saveData = JsonUtility.FromJson<SaveData>(json);
+
+            ActualPlayer = saveData.Player;
+            PlayerScores = saveData.SavedPlayerScores;
         }
     }
 }
