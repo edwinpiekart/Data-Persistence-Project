@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,8 @@ public class DropdownHandler : MonoBehaviour
     void DropdownItemSelected()
     {
         int index = dropdown.value;
-        if (index >= 0)
+        
+        if (index >= 0 && dropdown.options.Count > 0)
         {
             PlayerNameField.text = dropdown.options[index].text;
         }

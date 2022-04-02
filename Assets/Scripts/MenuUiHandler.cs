@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -26,7 +27,8 @@ public class MenuUiHandler : MonoBehaviour
     
     public void StartGame()
     {
-        ScoreManager.Instance.AddPlayer(PlayerNameField.text);
+        string playerName = new string(PlayerNameField.text.Take(10).ToArray());
+        ScoreManager.Instance.AddPlayer(playerName);
         ScoreManager.PlayerScore actualPlayer = ScoreManager.Instance.ActualPlayer;
         ScoreManager.Instance.SetBestScoreFromList();
         

@@ -11,7 +11,9 @@ public class ScoreManager : MonoBehaviour
     private PlayerScore actualPlayer;
     // Events
     public delegate void ChangePlayerAction();
+    public delegate void LoadCompleteAction();
     public static event ChangePlayerAction OnChangePlayer;
+    public static event LoadCompleteAction OnLoadComplete;
     
     public PlayerScore BestScore
     {
@@ -109,8 +111,9 @@ public class ScoreManager : MonoBehaviour
             string json = File.ReadAllText(path);
             SaveData saveData = JsonUtility.FromJson<SaveData>(json);
 
-            ActualPlayer = saveData.Player;
             PlayerScores = saveData.SavedPlayerScores;
+            ActualPlayer = saveData.Player;
+            OnLoadComplete?.Invoke();
         }
     }
 
