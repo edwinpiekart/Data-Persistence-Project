@@ -70,8 +70,6 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreManager.Instance.BestScore = m_Points;
-
         ScoreText.text = ActualScoreStr();
     }
 
@@ -80,15 +78,36 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         BestScoreText.text = BestScoreStr();
         GameOverText.SetActive(true);
+        UpdateBestScore();
+        
+        SaveScore();
     }
 
     private string BestScoreStr()
     {
-        return $"Best Score: Name: {ScoreManager.Instance.BestScore}";
+        return $"Best: {ScoreManager.Instance.BestScore.Name}: {ScoreManager.Instance.BestScore.Score}";
     }
 
     private string ActualScoreStr()
     {
-        return $"Score: {ScoreManager.Instance.ActualPlayer}: {m_Points}";
+        return $"Score: {ScoreManager.Instance.ActualPlayer.Name}: {m_Points}";
+    }
+
+    void SaveScore()
+    {
+        ScoreManager.PlayerScore actualPlayer = ScoreManager.Instance.ActualPlayer;
+        actualPlayer.Score = m_Points;
+        ScoreManager.Instance.ActualPlayer = actualPlayer;
+        
+        ScoreManager.Instance.SavePlayer();
+    }
+
+    void UpdateBestScore()
+    {
+        ScoreManager.Instance.BestScore = new ScoreManager.PlayerScore
+        {
+            Name = ScoreManager.Instance.ActualPlayer.Name,
+            Score = m_Points
+        };
     }
 }

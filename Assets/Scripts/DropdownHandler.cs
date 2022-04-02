@@ -7,7 +7,7 @@ using TMPro;
 
 public class DropdownHandler : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField playerNameField;
+    [SerializeField] private TMP_InputField PlayerNameField;
     private TMP_Dropdown dropdown;
 
     void OnEnable()
@@ -53,20 +53,19 @@ public class DropdownHandler : MonoBehaviour
         int index = dropdown.value;
         if (index >= 0)
         {
-            playerNameField.text = dropdown.options[index].text;
+            PlayerNameField.text = dropdown.options[index].text;
         }
     }
 
     void ChangePlayerListener()
     {
-        string actualPlayer = ScoreManager.Instance.ActualPlayer;
-        playerNameField.text = actualPlayer;
-        StartCoroutine(ChangeDropdownValue(actualPlayer));
+        ScoreManager.PlayerScore actualPlayer = ScoreManager.Instance.ActualPlayer;
+        StartCoroutine(ChangeDropdownValue(actualPlayer.Name));
     }
 
     IEnumerator ChangeDropdownValue(string actualPlayer)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
         SetDropdownValue(actualPlayer);
     }
 }

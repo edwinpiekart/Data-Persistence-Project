@@ -1641,7 +1641,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 11500000, guid: 6ec2a4480efdb63479bbb35e8dd50aee, type: 3}
         m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
         m_MethodName: 
         m_Mode: 1
@@ -1704,7 +1704,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ec2a4480efdb63479bbb35e8dd50aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNameField: {fileID: 1018060126}
+  PlayerNameField: {fileID: 1018060126}
 --- !u!1 &1165555218
 GameObject:
   m_ObjectHideFlags: 0

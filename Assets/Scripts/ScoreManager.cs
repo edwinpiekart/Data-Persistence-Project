@@ -7,31 +7,29 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
-    private int bestScore;
-    private string actualPlayer;
+    private PlayerScore bestScore;
+    private PlayerScore actualPlayer;
     // Events
     public delegate void ChangePlayerAction();
-
     public static event ChangePlayerAction OnChangePlayer;
     
-
-    public int BestScore
+    public PlayerScore BestScore
     {
         get => bestScore;
         set
         {
-            if (value > bestScore)
+            if (value.Score > bestScore.Score)
             {
                 bestScore = value;
             }
         }
     }
 
-    public string ActualPlayer
+    public PlayerScore ActualPlayer
     {
         get => actualPlayer;
 
-        private set
+        set
         {
             actualPlayer = value;
             OnChangePlayer?.Invoke();
@@ -79,18 +77,20 @@ public class ScoreManager : MonoBehaviour
             PlayerScores.Add(playerScore);
         }
 
-        ActualPlayer = playerScore.Name;
+        ActualPlayer = playerScore;
     }
     
     [System.Serializable]
     class SaveData
     {
-        public string Player;
+        public PlayerScore Player;
         public List<PlayerScore> SavedPlayerScores;
     }
 
     public void SavePlayer()
     {
+        UpdatePlayersList();
+        
         SaveData saveData = new SaveData
         {
             Player = ActualPlayer,
@@ -112,5 +112,31 @@ public class ScoreManager : MonoBehaviour
             ActualPlayer = saveData.Player;
             PlayerScores = saveData.SavedPlayerScores;
         }
+    }
+
+    public void SetBestScoreFromList()
+    {
+        int bs = 0;
+        // which one is the best?
+        foreach (PlayerScore ps in PlayerScores)
+        {
+            if (ps.Score > bs)
+                bs = ps.Score;
+        }
+        // bs has best score
+        PlayerScore bScore = PlayerScores.Find(
+            (ps2) => ps2.Score == bs
+            );
+        // bScore is the best :-)
+        BestScore = bScore;
+    }
+
+    void UpdatePlayersList()
+    {
+        int i = PlayerScores.FindIndex(
+            (ps) => ps.Name == ActualPlayer.Name
+        );
+        if (PlayerScores[i].Score < ActualPlayer.Score)
+            PlayerScores[i] = ActualPlayer;
     }
 }

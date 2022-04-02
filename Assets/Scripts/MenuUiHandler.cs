@@ -9,6 +9,16 @@ public class MenuUiHandler : MonoBehaviour
 {
     [SerializeField] private TMP_InputField PlayerNameField;
 
+    void OnEnable()
+    {
+        ScoreManager.OnChangePlayer += ChangePlayerListener;
+    }
+    
+    void OnDisable()
+    {
+        ScoreManager.OnChangePlayer -= ChangePlayerListener;
+    }
+    
     void Start()
     {
         ScoreManager.Instance.LoadPlayers();
@@ -17,12 +27,18 @@ public class MenuUiHandler : MonoBehaviour
     public void StartGame()
     {
         ScoreManager.Instance.AddPlayer(PlayerNameField.text);
-        string actualPlayer = ScoreManager.Instance.ActualPlayer;
+        ScoreManager.PlayerScore actualPlayer = ScoreManager.Instance.ActualPlayer;
+        ScoreManager.Instance.SetBestScoreFromList();
         
-        if (!String.IsNullOrEmpty(actualPlayer))
+        if (!String.IsNullOrEmpty(actualPlayer.Name))
         {
             ScoreManager.Instance.SavePlayer();
             SceneManager.LoadScene(1);
         }
+    }
+
+    void ChangePlayerListener()
+    {
+        PlayerNameField.text = ScoreManager.Instance.ActualPlayer.Name;
     }
 }
